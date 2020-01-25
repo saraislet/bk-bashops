@@ -6,6 +6,7 @@ local*
 
 # Temp files
 .~*
+*.swp
 
 # dotenv
 .env
