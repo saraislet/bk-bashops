@@ -1,0 +1,14 @@
+{
+  "chef-deploy-to-staging": [
+    {"confirmation": "yes"}
+  ],
+  "chef-deploy-to-production": [
+    {"confirmation": "yes"}
+  ],
+  "chef-pause-chef-staging": [
+    {
+        "search-str": "",
+        "action": ""
+    }
+  ]
+}
