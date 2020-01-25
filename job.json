@@ -1,0 +1,6 @@
+{
+  "pipeline": "chef-deploy-to-staging",
+  "branch": "vault-config-cookbook-version",
+  "commit": "HEAD",
+  "message": "Test pd-vault-config 0.1.1"
+}
