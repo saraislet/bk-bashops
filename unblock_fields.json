@@ -10,5 +10,8 @@
         "search-str": "",
         "action": ""
     }
+  ],
+  "chef-converge-search-str-staging": [
+    {"search-str": ""}
   ]
 }
