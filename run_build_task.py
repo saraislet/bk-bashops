@@ -102,25 +102,26 @@ def unblock_build(build):
     build = get_build(build)
     for i, job in enumerate(build['jobs']):
         state_printed = None
-        print("Next job")
-        while job.get('state') != 'passed':
+        while job.get('state') != 'passed' and job.get('state') != 'unblocked':
             if job.get('type') == 'waiter':
                 break
 
             if not state_printed:
                 state_printed = str(job.get('state'))
-                print('\n\nLabel: ' + str(job.get('label'))
+                print('\nLabel: ' + str(job.get('label'))
                       + '\nState: ' + state_printed)
 
             if job.get('state') == 'blocked' and job.get('type') == 'manual':
                 print('\nAttempting to unblock')
-                fields = get_unblock_fields(job)
+                fields = get_unblock_fields(build_task)
                 r = bk.jobs().unblock_job(organization=ORG,
                                           pipeline=build['pipeline']['slug'],
                                           build=build['number'],
                                           job=job['id'],
                                           fields=fields)
-                if r.json()
+                if r.get('state') and r['state'] == 'unblocked':
+                    print("Step unblocked\n")
+                    break
 
             time.sleep(3)
             build = get_build(build)
