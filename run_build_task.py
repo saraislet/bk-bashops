@@ -44,12 +44,9 @@ def load_json(filename):
 
 def run_build(job_filename):
     build_task = load_json(job_filename)
-    print('Job JSON:\n' + json.dumps(build_task, indent=2))
 
     build = start_build(build_task)
-    print('\n\nBuild response:\n' + json.dumps(build, indent=2))
     build_details = get_build(build)
-
     build_result = unblock_build(build_details)
 
 
@@ -62,10 +59,6 @@ def start_build(build_task):
                                  branch=build_task['branch'],
                                  message=build_task['message'],
                                  ignore_pipeline_branch_filters=True)
-
-    #r = requests.post(API_BASE_URL + 'pipelines/' + build_task['pipeline'] + '/builds',
-    #                  json=payload, headers=HEADERS)
-    #return json.loads(r.text)
 
 
 def get_build(build):
@@ -126,32 +119,7 @@ def unblock_build(build):
             time.sleep(3)
             build = get_build(build)
             job = build['jobs'][i]
-
-
-            # fields = {
-            #     'name': build['creator']['name'],
-            #     'email': build['creator']['email']
-            #}
-            # r = bk.jobs().unblock_job(ORG, build['pipeline']['slug'], build['number'], job['id'], fields)
-    #    job_status = bk.jobs().get_job_log(ORG, build['pipeline']['slug'], build['number'], job_id)
-
-    # while True:
-    #     r = requests.get(API_BASE_URL + 'pipelines/' + pipeline + '/builds/' + build_number,
-    #                      headers=HEADERS)
-    #     build_status = json.loads(r.text)
-    #     print('\n\nBuild status:\n' + json.dumps(build, indent=2))
-    #     if build_status['blocked'] == 'false': break
-    #     time.sleep(10)
-    # job_id = build_details['jobs'][4]['id']
-    # GET_JOB_LOG_URL = API_BASE_URL + 'pipelines/' + build['pipeline']['slug'] + '/builds/' + str(build['number']) + '/jobs/' + job_id + '/log'
-    # r = requests.get(GET_JOB_LOG_URL, headers=HEADERS)
-    # r = requests.put(API_BASE_URL + 'pipelines/' + build['pipeline']['slug'] + '/builds/' + str(build['number']) + '/jobs/' + job_id + '/unblock',
-    #                   body={"fields": fields}, headers=HEADERS)
-    # job_id = build['jobs'][4]['id']
-    # payload = {'fields': {'name': build['creator']['name'], 'email': build['creator']['email']}}
-    # r = requests.put(API_BASE_URL + 'pipelines/' + build['pipeline']['slug'] + '/builds/' + str(build['number']) + '/jobs/' + job_id + '/unblock', json=json.dumps(payload), headers=HEADERS)
-
 if __name__ == '__main__':
     print(f"Loading job details from file '{job_filename}'")
     build_task = load_json(job_filename)
-    #run_build(job_filename)
+    run_build(job_filename)
