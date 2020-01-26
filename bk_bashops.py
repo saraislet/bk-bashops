@@ -12,19 +12,6 @@ import sys
 JSON_PATH = '.'
 
 
-def get_token():
-    TOKEN = os.environ.get('BUILDKITE_TOKEN')
-    if not TOKEN:
-        TOKEN = getpass('Please enter your Buildkite API token.\n'
-                         + 'The token should have scopes read_builds, '
-                         + 'write_builds, read_pipelines.\n'
-                         + 'https://buildkite.com/user/api-access-tokens\n> ')
-    if not TOKEN:
-        print('Missing token.')
-        exit(1)
-    return TOKEN
-
-
 def get_json_filenames(path):
     return [f for f in os.listdir(path) if f.endswith(".json")]
 
@@ -54,7 +41,6 @@ def pick_file(filenames):
 
 
 if __name__ == '__main__':
-    TOKEN = get_token()
     json_filenames = get_json_filenames(JSON_PATH)
     filename = pick_file(json_filenames)
     build_task = run_build_task.load_json(filename)    
