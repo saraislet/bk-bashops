@@ -48,13 +48,14 @@ def run_build(build_task):
     print('Loading and unblocking build.', end='')
     build = get_build(build)
     build_result = unblock_build(build, build_task)
+    build_state = build_result.get('state')
 
-    print("Job's done.", end='')
-    if build_result['state'] == 'finished':
+    print("\nJob's done.", end='')
+    if build_state == 'finished':
         print(' \\o/')
-    elif build_result['state'] == 'failed':
+    elif build_state == 'failed':
         print(' : (')
-    print(f"\nBuild state: {build['state']}")
+    print(f"\nBuild state: {build_state}")
 
 
 
@@ -144,6 +145,7 @@ def unblock_build(build, build_task):
             continue
 
         time.sleep(3)
+    return build
         
 
 
