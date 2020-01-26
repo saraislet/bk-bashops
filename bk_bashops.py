@@ -19,7 +19,7 @@ def get_json_filenames(path):
 
 def pick_file(filenames):
     # Don't make me write pagination.
-    # Fuck it, fine.
+    # Okay, fine.
     offset = 0
     count = 10
     print("\nPlease select a file.\n")
@@ -42,29 +42,28 @@ def pick_file(filenames):
         exit(1)
 
 
-def get_task(build_tasks):
-    """This function could support a picker."""
-    return build_tasks[0]
+def run_tasks(task_queue):
+    for task in task_queue:
+        print(f"\n Starting task: {task[0]}")
+        build_tasks = run_build_task.load_json(task[0])
+        build_task = build_tasks[task[1]]
+        pprint(build_task)
+        run_build_task.run_build(build_task)
+    print('Finished with all tasks in the queue.')
 
 
-def run_tasks():
+def handle_tasks(task_queue):
     json_filenames = get_json_filenames(JSON_PATH)
-    filename = pick_file(json_filenames)
-    build_tasks = run_build_task.load_json(filename)
-    build_task = get_task(build_tasks)
-    pprint(build_task)
-    run_build_task.run_build(build_task)
-
-
-def handle_tasks():
     while True:
-        run_tasks()
-
-        print('Would you like to run another task?')
+        task_queue.append((pick_file(json_filenames), 0))
+        print(task_queue)
+        print('Would you like to add another task to the queue?')
         choice = input('y/n > ')
         if choice.lower() != 'y':
-            exit(0)
+            break
+    run_tasks(task_queue)
 
 
 if __name__ == '__main__':
-    handle_tasks()
+    task_queue = []
+    handle_tasks(task_queue)
