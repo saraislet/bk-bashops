@@ -44,6 +44,9 @@ def run_build(job_filename):
     build_task = load_json(job_filename)
 
     build = start_build(build_task)
+    print('\nStarting build.')
+    time.sleep(10)
+    print('Loading and unblocking build.', end='')
     build_details = get_build(build)
     build_result = unblock_build(build_details)
     print("Build finished. \\o/")
@@ -61,14 +64,11 @@ def start_build(build_task):
 
 
 def get_build(build):
-    return bk.builds().get_build_by_number(organization=ORG,
-                                           pipeline=build['pipeline']['slug'],
-                                           build_number=build['number'])
+    return get_build_number(build['pipeline']['slug'], build['number'])
 
-
-def get_build_number(build_task, build_number):
+def get_build_number(pipeline, build_number):
     return bk.builds().get_build_by_number(organization=ORG,
-                                           pipeline=build_task['pipeline'],
+                                           pipeline=pipeline,
                                            build_number=build_number)
 
 
@@ -90,33 +90,55 @@ def get_unblock_fields(build_task):
 
 
 def unblock_build(build):
-    build = get_build(build)
-    for i, job in enumerate(build['jobs']):
-        state_printed = None
-        while job.get('state') != 'passed' and job.get('state') != 'unblocked':
-            if job.get('type') == 'waiter':
-                break
+    while len(build['jobs']) == 1:
+        time.sleep(3)
+        print('.', end='')
+        build = get_build(build)
 
-            if not state_printed:
-                state_printed = str(job.get('state'))
-                print('\nLabel: ' + str(job.get('label'))
-                      + '\nState: ' + state_printed)
+    continue_states = Set(['passed', 'unblocked', 'finished', 'skipped'])
+    break_states = Set(['finished', 'canceled'])
 
-            if job.get('state') == 'blocked' and job.get('type') == 'manual':
-                print('\nAttempting to unblock')
-                fields = get_unblock_fields(build_task)
-                r = bk.jobs().unblock_job(organization=ORG,
-                                          pipeline=build['pipeline']['slug'],
-                                          build=build['number'],
-                                          job=job['id'],
-                                          fields=fields)
-                if r.get('state') and r['state'] == 'unblocked':
-                    print("Step unblocked\n")
-                    break
+    # Initial conditions
+    state_printed = None
+    i = 0
 
-            time.sleep(3)
-            build = get_build(build)
-            job = build['jobs'][i]
+    while True:
+        build = get_build(build)
+        job = build['jobs'][i]
+        job_state = str(job.get('state'))
+
+        if build['state'] in break_states:
+            print(f"Job's done. Build state: {build['state']}")
+
+        if job.get('type') == 'waiter' or job_state in continue_states:
+            i += 1
+            state_printed = None
+            continue
+
+        if not state_printed:
+            print('\nLabel: ' + str(job.get('label'))
+                  + '\nState: ', end='')
+        if state_printed != job_state:
+            state_printed = job_state
+            print(job_state)
+        print('.', end='')
+
+        if job.get('state') == 'blocked' and job.get('type') == 'manual':
+            print('\nAttempting to unblock')
+            fields = get_unblock_fields(build_task)
+            r = bk.jobs().unblock_job(organization=ORG,
+                                      pipeline=build['pipeline']['slug'],
+                                      build=build['number'],
+                                      job=job['id'],
+                                      fields=fields)
+            if r.get('state') and r['state'] == 'unblocked':
+                print("Step unblocked\n")
+                i += 1
+                state_printed = None
+                continue
+
+        time.sleep(3)
+        
 
 
 if __name__ == '__main__':
