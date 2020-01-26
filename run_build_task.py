@@ -90,11 +90,12 @@ def get_unblock_fields(build_task):
 def unblock_build(build, build_task):
     while len(build['jobs']) == 1:
         time.sleep(3)
-        print('.', end='')
+        print('.', end='', flush=True)
         build = get_build(build)
+    print('\n', end='')
 
     continue_states = set(['passed', 'unblocked', 'finished', 'skipped'])
-    break_states = set(['finished', 'canceled'])
+    break_states = set(['finished', 'canceled', 'failed'])
 
     # Initial conditions
     state_printed = None
@@ -120,8 +121,8 @@ def unblock_build(build, build_task):
                   + '\nState: ', end='')
         if state_printed != job_state:
             state_printed = job_state
-            print(job_state)
-        print('.', end='')
+            print(job_state + '.', end='')
+        print('.', end='', flush=True)
 
         if job.get('state') == 'blocked' and job.get('type') == 'manual':
             print('\nAttempting to unblock')
@@ -132,7 +133,7 @@ def unblock_build(build, build_task):
                                       job=job['id'],
                                       fields=fields)
             if r.get('state') and r['state'] == 'unblocked':
-                print("Step unblocked\n")
+                print("Step unblocked")
                 i += 1
                 state_printed = None
                 continue
