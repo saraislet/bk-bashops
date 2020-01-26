@@ -41,9 +41,15 @@ def pick_file(filenames):
         exit(1)
 
 
+def get_task(build_tasks):
+    """This function could support a picker."""
+    return build_tasks[0]
+
+
 if __name__ == '__main__':
     json_filenames = get_json_filenames(JSON_PATH)
     filename = pick_file(json_filenames)
-    build_task = run_build_task.load_json(filename)
+    build_tasks = run_build_task.load_json(filename)
+    build_task = get_task(build_tasks)
     pprint(build_task)
     run_build_task.run_build(filename)
