@@ -3,6 +3,7 @@ import os
 import requests
 import sys
 import time
+
 sys.path.insert(0, '/Users/srosenberg/go/src/github.com/Saraislet/pybuildkite')
 from pybuildkite.buildkite import Buildkite, BuildState
 
@@ -40,16 +41,13 @@ def load_json(filename):
     return data
 
 
-def run_build(job_filename):
-    build_task = load_json(job_filename)
-
+def run_build(build_task):
     build = start_build(build_task)
     print('\nStarting build.')
-    time.sleep(10)
+    time.sleep(5)
     print('Loading and unblocking build.', end='')
-    build_details = get_build(build)
-    build_result = unblock_build(build_details)
-    print("Build finished. \\o/")
+    build = get_build(build)
+    build_result = unblock_build(build, build_task)
 
 
 def start_build(build_task):
@@ -89,14 +87,14 @@ def get_unblock_fields(build_task):
     return fields
 
 
-def unblock_build(build):
+def unblock_build(build, build_task):
     while len(build['jobs']) == 1:
         time.sleep(3)
         print('.', end='')
         build = get_build(build)
 
-    continue_states = Set(['passed', 'unblocked', 'finished', 'skipped'])
-    break_states = Set(['finished', 'canceled'])
+    continue_states = set(['passed', 'unblocked', 'finished', 'skipped'])
+    break_states = set(['finished', 'canceled'])
 
     # Initial conditions
     state_printed = None
@@ -108,7 +106,9 @@ def unblock_build(build):
         job_state = str(job.get('state'))
 
         if build['state'] in break_states:
-            print(f"Job's done. Build state: {build['state']}")
+            print(f"Job's done. \\o/\n"
+                  + f"Build state: {build['state']}")
+            break
 
         if job.get('type') == 'waiter' or job_state in continue_states:
             i += 1
@@ -149,4 +149,4 @@ if __name__ == '__main__':
 
     print(f"Loading job details from file '{job_filename}'")
     build_task = load_json(job_filename)
-    run_build(job_filename)
+    run_build(build_task)
