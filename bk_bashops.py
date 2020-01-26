@@ -52,4 +52,4 @@ if __name__ == '__main__':
     build_tasks = run_build_task.load_json(filename)
     build_task = get_task(build_tasks)
     pprint(build_task)
-    run_build_task.run_build(filename)
+    run_build_task.run_build(build_task)
