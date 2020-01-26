@@ -47,10 +47,24 @@ def get_task(build_tasks):
     return build_tasks[0]
 
 
-if __name__ == '__main__':
+def run_tasks():
     json_filenames = get_json_filenames(JSON_PATH)
     filename = pick_file(json_filenames)
     build_tasks = run_build_task.load_json(filename)
     build_task = get_task(build_tasks)
     pprint(build_task)
     run_build_task.run_build(build_task)
+
+
+def handle_tasks():
+    while True:
+        run_tasks()
+
+        print('Would you like to run another task?')
+        choice = input('y/n > ')
+        if choice.lower() != 'y':
+            exit(0)
+
+
+if __name__ == '__main__':
+    handle_tasks()
