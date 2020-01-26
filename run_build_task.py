@@ -49,6 +49,14 @@ def run_build(build_task):
     build = get_build(build)
     build_result = unblock_build(build, build_task)
 
+    print("Job's done.", end='')
+    if build_result['state'] == 'finished':
+        print(' \\o/')
+    else if build_result['state'] == 'failed':
+        print(' : (')
+    print(f"\nBuild state: {build['state']}")
+
+
 
 def start_build(build_task):
     message = build_task['message'] or None
@@ -128,9 +136,7 @@ def unblock_build(build, build_task):
                 continue
 
         if build['state'] in break_states:
-            print(f"Job's done. \\o/\n"
-                  + f"Build state: {build['state']}")
-            break
+            return build
 
         if job.get('type') == 'waiter' or job_state in continue_states:
             i += 1
