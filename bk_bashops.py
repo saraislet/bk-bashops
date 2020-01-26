@@ -52,7 +52,7 @@ def run_tasks(task_queue):
     print('Finished with all tasks in the queue.')
 
 
-def handle_tasks(task_queue):
+def choose_tasks(task_queue):
     json_filenames = get_json_filenames(JSON_PATH)
     while True:
         task_queue.append((pick_file(json_filenames), 0))
@@ -61,9 +61,21 @@ def handle_tasks(task_queue):
         choice = input('y/n > ')
         if choice.lower() != 'y':
             break
-    run_tasks(task_queue)
+    return task_queue
+
+
+def enqueue_tasks(task_queue):
+    # Could load task queue from file.
+    if len(sys.argv) > 1:
+        filenames = sys.argv[1:]
+        for f in filenames:
+            task_queue.extend(run_build_task.load_json(f))
+    else:
+        task_queue.extend(choose_tasks(task_queue))
+    return task_queue
 
 
 if __name__ == '__main__':
     task_queue = []
-    handle_tasks(task_queue)
+    task_queue = enqueue_tasks(task_queue)
+    run_tasks(task_queue)
