@@ -92,32 +92,21 @@ def unblock_build(build, build_task):
         time.sleep(3)
         print('.', end='', flush=True)
         build = get_build(build)
-    print('\n', end='')
 
-    continue_states = set(['passed', 'unblocked', 'finished', 'skipped'])
+    continue_states = set(['passed', 'unblocked', 'skipped'])
     break_states = set(['finished', 'canceled', 'failed'])
 
     # Initial conditions
     state_printed = None
     i = 0
 
-    while True:
+    while i < len(build['jobs']):
         build = get_build(build)
         job = build['jobs'][i]
         job_state = str(job.get('state'))
 
-        if build['state'] in break_states:
-            print(f"Job's done. \\o/\n"
-                  + f"Build state: {build['state']}")
-            break
-
-        if job.get('type') == 'waiter' or job_state in continue_states:
-            i += 1
-            state_printed = None
-            continue
-
         if not state_printed:
-            print('\nLabel: ' + str(job.get('label'))
+            print('\n\nLabel: ' + str(job.get('label'))
                   + '\nState: ', end='')
         if state_printed != job_state:
             state_printed = job_state
@@ -137,6 +126,16 @@ def unblock_build(build, build_task):
                 i += 1
                 state_printed = None
                 continue
+
+        if build['state'] in break_states:
+            print(f"Job's done. \\o/\n"
+                  + f"Build state: {build['state']}")
+            break
+
+        if job.get('type') == 'waiter' or job_state in continue_states:
+            i += 1
+            state_printed = None
+            continue
 
         time.sleep(3)
         
