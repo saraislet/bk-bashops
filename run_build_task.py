@@ -36,6 +36,7 @@ def run_build(job_filename):
     build = start_build(build_task)
     build_details = get_build(build)
     build_result = unblock_build(build_details)
+    print("Build finished. \\o/")
 
 
 def start_build(build_task):
