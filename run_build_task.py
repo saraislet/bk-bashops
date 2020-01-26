@@ -52,7 +52,7 @@ def run_build(build_task):
     print("Job's done.", end='')
     if build_result['state'] == 'finished':
         print(' \\o/')
-    else if build_result['state'] == 'failed':
+    elif build_result['state'] == 'failed':
         print(' : (')
     print(f"\nBuild state: {build['state']}")
 
