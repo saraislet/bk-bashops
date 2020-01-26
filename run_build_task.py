@@ -14,14 +14,24 @@ from pybuildkite.buildkite import Buildkite, BuildState
 # Create a Buildkite API token here:
 # https://buildkite.com/user/api-access-tokens
 
+def get_token():
+    TOKEN = os.environ.get('BUILDKITE_TOKEN')
+    if not TOKEN:
+        TOKEN = getpass('Please enter your Buildkite API token.\n'
+                         + 'Scope: read_builds, write_builds, read_pipelines.\n'
+                         + 'https://buildkite.com/user/api-access-tokens\n> ')
+    if not TOKEN:
+        print('Missing token.')
+        exit(1)
+    return TOKEN
+
+TOKEN = get_token()
 HEADERS = {'Authorization': 'Bearer '+TOKEN}
 ORG = 'pagerduty'
 API_BASE_URL = 'https://api.buildkite.com/v2/organizations/' + ORG + '/'
 unblock_filename = 'unblock_fields.json'
-
 bk = Buildkite()
 bk.set_access_token(TOKEN)
-
 
 def load_json(filename):
     data = {}
@@ -79,7 +89,6 @@ def get_unblock_fields(build_task):
     return fields
 
 
-
 def unblock_build(build):
     build = get_build(build)
     for i, job in enumerate(build['jobs']):
@@ -111,14 +120,6 @@ def unblock_build(build):
 
 
 if __name__ == '__main__':
-    TOKEN = os.environ['BUILDKITE_TOKEN']
-    if not TOKEN:
-        print('Please load Buildkite API token into environment variable BUILDKITE_TOKEN.\n\n'
-              + 'Create Buildkite API token here: '
-              + 'https://buildkite.com/user/api-access-tokens\n'
-              + 'Scope: read_builds, write_builds, read_build_logs')
-        exit(1)
-
     if len(sys.argv) < 2:
         job_filename = input('Please enter job json filename: ')
     else:
