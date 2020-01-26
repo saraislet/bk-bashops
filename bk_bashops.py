@@ -29,6 +29,7 @@ def pick_file(filenames):
         print("(m) more\n")
 
         choice = input("> ")
+        print('\n', end='')
         if choice.lower() == 'm':
             offset += count
             continue
