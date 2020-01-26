@@ -1,6 +1,7 @@
 import run_build_task
 
 from getpass import getpass
+from pprint import pprint
 import os
 import sys
 
@@ -24,16 +25,16 @@ def pick_file(filenames):
     print("\nPlease select a file.\n")
     while True and offset < len(filenames):
         for i, f in enumerate(filenames[offset:offset+count]):
-            print(f"({i}) {f}\n")
-        print("(m) more\n\n")
+            print(f"({i}) {f}")
+        print("(m) more\n")
 
         choice = input("> ")
-        if choice in range(offset, count):
-            return filenames(choice)
-
         if choice.lower() == 'm':
             offset += count
             continue
+
+        if choice.isnumeric() and int(choice) in range(offset, count):
+            return filenames[int(choice)]
 
         # passive-aggressively end program
         print("I'm sorry, I didn't understand your input.")
@@ -43,5 +44,6 @@ def pick_file(filenames):
 if __name__ == '__main__':
     json_filenames = get_json_filenames(JSON_PATH)
     filename = pick_file(json_filenames)
-    build_task = run_build_task.load_json(filename)    
-
+    build_task = run_build_task.load_json(filename)
+    pprint(build_task)
+    run_build_task.run_build(filename)
