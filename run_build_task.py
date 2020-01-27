@@ -19,8 +19,8 @@ def get_token():
     TOKEN = os.environ.get('BUILDKITE_TOKEN')
     if not TOKEN:
         TOKEN = getpass('Please enter your Buildkite API token.\n'
-                         + 'Scope: read_builds, write_builds, read_pipelines.\n'
-                         + 'https://buildkite.com/user/api-access-tokens\n> ')
+                        + 'Scope: read_builds, write_builds, read_pipelines.\n'
+                        + 'https://buildkite.com/user/api-access-tokens\n> ')
     if not TOKEN:
         print('Missing token.')
         exit(1)
@@ -131,7 +131,7 @@ def unblock_build(build, build_task):
                                       job=job['id'],
                                       fields=fields)
             if r.get('state') and r['state'] == 'unblocked':
-                print("Step unblocked")
+                print('Step unblocked')
                 i += 1
                 state_printed = None
                 continue

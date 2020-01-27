@@ -14,7 +14,7 @@ JSON_PATH = '.'
 
 
 def get_json_filenames(path):
-    return [f for f in os.listdir(path) if f.endswith(".json")]
+    return [f for f in os.listdir(path) if f.endswith('.json')]
 
 
 def pick_file(filenames):
@@ -22,13 +22,13 @@ def pick_file(filenames):
     # Okay, fine.
     offset = 0
     count = 10
-    print("\nPlease select a file.\n")
+    print('\nPlease select a file.\n')
     while True and offset < len(filenames):
         for i, f in enumerate(filenames[offset:offset+count]):
             print(f"({i}) {f}")
         print("(m) more\n")
 
-        choice = input("> ")
+        choice = input('> ')
         print('\n', end='')
         if choice.lower() == 'm':
             offset += count
@@ -75,7 +75,18 @@ def enqueue_tasks(task_queue):
     return task_queue
 
 
+def confirm_lock():
+    '''Confirm that user holds the lock'''
+    # Could include command-line arguments to bypass
+    # Could check BK user and lock holder for auto-bypass
+    # e.g., https://github.com/PagerDuty/chef/blob/master/.buildkite/lock_check.sh#L13-L17
+    print('Are you the person holding the lock'
+          + ' OR do you have their explicit approval to do this build?')
+    if input('y/n > ').lower() != 'y':
+        exit('\nPlease get the lock before running build tasks.')
+
 if __name__ == '__main__':
+    confirm_lock()
     task_queue = []
     task_queue = enqueue_tasks(task_queue)
     run_tasks(task_queue)
