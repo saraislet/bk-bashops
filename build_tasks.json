@@ -1,0 +1,30 @@
+[
+  {
+    "pipeline": "chef-pause-chef-staging",
+    "branch": "example-branch",
+    "commit": "HEAD",
+    "message": "",
+    "unblock_fields": {
+      "search-str": "name:stg-environment-role01",
+      "action": "pause"
+    }
+  },
+  {
+    "pipeline": "chef-deploy-to-staging",
+    "branch": "example-branch",
+    "commit": "HEAD",
+    "message": "",
+    "unblock_fields": {
+      "confirmation": "yes"
+    }
+  },
+  {
+    "pipeline": "chef-converge-search-string-staging",
+    "branch": "example-branch",
+    "commit": "HEAD",
+    "message": "",
+    "unblock_fields": {
+      "search-str": "name:stg-environment-role01"
+    }
+  }
+]
