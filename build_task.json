@@ -1,9 +1,9 @@
 [
   {
     "pipeline": "chef-deploy-to-staging",
-    "branch": "vault-config-cookbook-version",
+    "branch": "example-branch",
     "commit": "HEAD",
-    "message": "Test pd-vault-config 0.1.1",
+    "message": "",
     "unblock_fields": {
       "confirmation": "yes"
     }
