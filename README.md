@@ -22,22 +22,7 @@ Script uses [f-strings](https://realpython.com/python-f-strings/) and requires P
   * (Optional) put Buildkite API Token in `BUILDKITE_TOKEN`
 * Write a sequence of Buildkite tasks in a JSON file. See `example_build_tasks.json`
 * Run script with `python3 bk_bashops.py [filename]`
-
-**There is a blocking error in pybuildkite fixed by a fork**
-
-## **pybuildkite issue:**
-Until [PyBuildkite is fixed](https://github.com/pyasi/pybuildkite/pull/35), clone the [working fork](https://github.com/Saraislet/pybuildkite/tree/fix-jobs-base-url) and load pybuildkite from that path:
-```bash
-$ git clone git@github.com:Saraislet/pybuildkite.git
-$ cd pybuldkite
-$ git checkout fix-jobs-base-url
-```
-
-And modify `run_build_task.py` to load from the path cloned above, [as shown here](https://github.com/PagerDuty/security-scripts/blob/1d358add519a6059b9b43678fc84c17e0fd42b05/bk_bashops/run_build_task.py#L7-L8)
-```python
-sys.path.insert(0, 'path_to/pybuildkite')
-from pybuildkite.buildkite import Buildkite, BuildState
-```
+* Install [PyBuildkite](https://github.com/pyasi/pybuildkite), e.g. with `pip install pybuildkite`
 
 ## Unblocking configuration
 
