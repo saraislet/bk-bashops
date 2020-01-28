@@ -4,7 +4,6 @@ import requests
 import sys
 import time
 
-sys.path.insert(0, '/Users/srosenberg/go/src/github.com/Saraislet/pybuildkite')
 from pybuildkite.buildkite import Buildkite, BuildState
 
 # Requires Python 3.6+ (because fstrings <3)
