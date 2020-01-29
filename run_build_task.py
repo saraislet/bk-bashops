@@ -27,9 +27,7 @@ def get_token():
     return TOKEN
 
 TOKEN = get_token()
-HEADERS = {'Authorization': 'Bearer '+TOKEN}
 ORG = 'pagerduty'
-API_BASE_URL = 'https://api.buildkite.com/v2/organizations/' + ORG + '/'
 unblock_filename = 'unblock_fields.json'
 bk = Buildkite()
 bk.set_access_token(TOKEN)
