@@ -1,6 +1,5 @@
 import run_build_task
 
-from getpass import getpass
 from pprint import pprint
 import os
 import sys
