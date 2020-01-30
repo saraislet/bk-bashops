@@ -1,6 +1,5 @@
 import run_build_task
 
-from getpass import getpass
 from pprint import pprint
 import os
 import sys
@@ -44,18 +43,17 @@ def pick_file(filenames):
 
 def run_tasks(task_queue):
     for task in task_queue:
-        print(f"\n Starting task: {task[0]}")
-        build_tasks = run_build_task.load_json(task[0])
-        build_task = build_tasks[task[1]]
-        pprint(build_task)
-        run_build_task.run_build(build_task)
+        print('\n Starting task: ')
+        pprint(task)
+        run_build_task.run_build(task)
     print('Finished with all tasks in the queue.')
 
 
 def choose_tasks(task_queue):
     json_filenames = get_json_filenames(JSON_PATH)
     while True:
-        task_queue.append((pick_file(json_filenames), 0))
+        f = pick_file(json_filenames)
+        task_queue.extend(run_build_task.load_json(f))
         print(task_queue)
         print('Would you like to add another task to the queue?')
         choice = input('y/n > ')

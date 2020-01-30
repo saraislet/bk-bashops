@@ -1,0 +1,25 @@
+{
+  "service-deploy-to-staging": [
+    {"confirmation": "yes"}
+  ],
+  "service-deploy-to-production": [
+    {"confirmation": "yes"}
+  ],
+  "service-action-search": [
+    {
+        "search-str": "",
+        "action": ""
+    }
+  ],
+  "service-provision-script": [
+    {"a-box-like": ""},
+    {
+      "count": "",
+      "size": "",
+      "chef-environment": "",
+      "role": "",
+      "image": "",
+      "datacenter": ""
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+from getpass import getpass
 import json
 import os
 import requests
@@ -26,10 +27,8 @@ def get_token():
     return TOKEN
 
 TOKEN = get_token()
-HEADERS = {'Authorization': 'Bearer '+TOKEN}
 ORG = 'pagerduty'
-API_BASE_URL = 'https://api.buildkite.com/v2/organizations/' + ORG + '/'
-unblock_filename = 'unblock_fields.json'
+unblock_filename = 'local_unblock_fields.json'
 bk = Buildkite()
 bk.set_access_token(TOKEN)
 
@@ -78,17 +77,20 @@ def get_build_number(pipeline, build_number):
                                            build_number=build_number)
 
 
-def get_unblock_fields(build_task):
+def get_unblock_fields(build_task, unblock_step=0):
     unblock_fields = load_json(unblock_filename)
     fields = unblock_fields.get(build_task['pipeline'])
     if not fields:
         raise KeyError
 
-    fields = fields[0]
+    fields = fields[unblock_step]
     for key, value in fields.items():
         if not value:
-            if build_task.get('unblock_fields') and build_task['unblock_fields'].get(key):
-                fields[key] = build_task['unblock_fields'][key]
+            if (build_task.get('unblock_fields')
+                and len(build_task['unblock_fields']) > unblock_step
+                and build_task['unblock_fields'][unblock_step].get(key)):
+                # If build_task includes this unblock_field for this step with that key, use it
+                fields[key] = build_task['unblock_fields'][unblock_step][key]
             else:
                 fields[key] = input('Please enter unblock value for ' + key + ': ')
 
@@ -105,6 +107,7 @@ def unblock_build(build, build_task):
     break_states = set(['finished', 'canceled', 'failed'])
 
     # Initial conditions
+    unblock_step = 0
     state_printed = None
     i = 0
 
@@ -123,7 +126,7 @@ def unblock_build(build, build_task):
 
         if job.get('state') == 'blocked' and job.get('type') == 'manual':
             print('\nAttempting to unblock')
-            fields = get_unblock_fields(build_task)
+            fields = get_unblock_fields(build_task, unblock_step)
             r = bk.jobs().unblock_job(organization=ORG,
                                       pipeline=build['pipeline']['slug'],
                                       build=build['number'],
@@ -133,6 +136,7 @@ def unblock_build(build, build_task):
                 print('Step unblocked')
                 i += 1
                 state_printed = None
+                unblock_step +=1
                 continue
 
         if build['state'] in break_states:
