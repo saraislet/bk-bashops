@@ -13,5 +13,18 @@
   ],
   "chef-converge-search-string-staging": [
     {"search-str": ""}
+  ],
+  "chef-provision-node-staging": [
+    {"a-box-like": ""},
+    {
+      "count": "",
+      "size": "",
+      "chef-environment": "",
+      "role": "",
+      "image": "",
+      "datacenter": "",
+      "add-to-vault": "yes",
+      "disable-ipsec": "no"
+    }
   ]
 }
