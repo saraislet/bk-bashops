@@ -28,7 +28,7 @@ def get_token():
 
 TOKEN = get_token()
 ORG = 'pagerduty'
-unblock_filename = 'unblock_fields.json'
+unblock_filename = 'local_unblock_fields.json'
 bk = Buildkite()
 bk.set_access_token(TOKEN)
 
