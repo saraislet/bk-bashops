@@ -45,6 +45,7 @@ def run_build(build_task):
     time.sleep(5)
     print('Loading and unblocking build.', end='')
     build = get_build(build)
+    print(f"\nURL: {build.get('web_url')}")
     build_result = unblock_build(build, build_task)
     build_state = build_result.get('state')
 
@@ -54,7 +55,7 @@ def run_build(build_task):
     elif build_state == 'failed':
         print(' : (')
     print(f"\nBuild state: {build_state}")
-
+    print(f"\nURL: {build_result.get('web_url')}")
 
 
 def start_build(build_task):
@@ -103,7 +104,7 @@ def unblock_build(build, build_task):
         print('.', end='', flush=True)
         build = get_build(build)
 
-    continue_states = set(['passed', 'unblocked', 'skipped'])
+    continue_states = set(['passed', 'unblocked', 'skipped', 'broken'])
     break_states = set(['finished', 'canceled', 'failed'])
 
     # Initial conditions
@@ -115,9 +116,11 @@ def unblock_build(build, build_task):
         build = get_build(build)
         job = build['jobs'][i]
         job_state = str(job.get('state'))
+        if job_state == 'broken': job_state += ' (skipped)'
 
         if not state_printed:
-            print('\n\nLabel: ' + str(job.get('label'))
+            label = job.get('label') or job.get('name')
+            print(f"\n\nStep({i}): " + str(label)
                   + '\nState: ', end='')
         if state_printed != job_state:
             state_printed = job_state
@@ -149,7 +152,6 @@ def unblock_build(build, build_task):
 
         time.sleep(3)
     return build
-        
 
 
 if __name__ == '__main__':
