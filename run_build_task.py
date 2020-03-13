@@ -116,7 +116,6 @@ def unblock_build(build, build_task):
         build = get_build(build)
         job = build['jobs'][i]
         job_state = str(job.get('state'))
-        if job_state == 'broken': job_state += ' (skipped)'
 
         if not state_printed:
             label = job.get('label') or job.get('name')
