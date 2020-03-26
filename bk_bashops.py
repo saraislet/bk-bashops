@@ -73,6 +73,12 @@ def enqueue_tasks(task_queue):
     return task_queue
 
 
+def print_task_queue(task_queue):
+    print('Task Queue:\n')
+    for task in task_queue:
+        pprint(task)
+    print('\n')
+
 def confirm_lock():
     '''Confirm that user holds the lock'''
     # Could include command-line arguments to bypass
@@ -84,7 +90,8 @@ def confirm_lock():
         exit('\nPlease get the lock before running build tasks.')
 
 if __name__ == '__main__':
-    confirm_lock()
     task_queue = []
     task_queue = enqueue_tasks(task_queue)
+    print_task_queue(task_queue)
+    confirm_lock()
     run_tasks(task_queue)
